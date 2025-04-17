@@ -6,7 +6,7 @@ on:
       [devel, stage, prod]
 
 jobs:
-  terraform-plan:
+  terraform-aply:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -38,5 +38,5 @@ jobs:
       - name: Terraform Plam
         run: terraform plan 
       
-      - name: Terraform plan
+      - name: Terraform apply
         run: terraform apply --auto-approve
