@@ -6,17 +6,26 @@ on:
       [devel, stage, prod]
 
 jobs:
-  build:
+  terraform-plan:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform/environments/${{ github.event.pull_request.base.ref }}
 
-    steps: 
+    env:
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+
+    steps:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Azure Login action
+        uses: azure/login@v2
         with:
-          node-version: '15'
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Enforce branching strategy
         if: github.event_name == 'pull_request'
@@ -30,19 +39,13 @@ jobs:
             exit 1
           fi
 
-      - name: Install dependencies
-        run: npm install
+      - name: Set up terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.1.7"
 
-      - name: Run linter
-        run: npm run lint
-
-      - name: Run formatter
-        run: npm run prettier
-
-      - name: Run tests
-        env: 
-          CI: true
-        run: npm run test
-
-      - name: Build project
-        run: npm run build
+      - name: Terraform Init
+        run: terraform init
+      
+      - name: Terraform Plam
+        run: terraform plan 
