@@ -18,6 +18,18 @@ jobs:
         with:
           node-version: '15'
 
+      - name: Enforce branching strategy
+        if: github.event_name == 'pull_request'
+        run: |
+          if [[ "${{ githui.event.pull_request.base.ref }}" == "stage" &&  "${{ githui.event.pull_request.head.ref }}" != "dev"]]
+            echo "Merge into stage can only be done from devel"
+            exit 1
+          fi
+          if [[ "${{ githui.event.pull_request.base.ref }}" == "prod" &&  "${{ githui.event.pull_request.head.ref }}" != "stage"]]
+            echo "Merge into prod can only be done from stage"
+            exit 1
+          fi
+
       - name: Install dependencies
         run: npm install
 

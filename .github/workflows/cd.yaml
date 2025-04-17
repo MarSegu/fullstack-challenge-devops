@@ -1,7 +1,7 @@
 name: CI Pipeline
 
 on: 
-  pull_request:
+  push:
     branches:
       [devel, stage, prod]
 
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./terraform/environments/${{ github.event.pull_request.base.ref }}
+        working-directory: ./terraform/environments/${{ github.ref_name }}
 
     env:
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
@@ -26,19 +26,7 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-          
-      - name: Enforce branching strategy
-        if: github.event_name == 'pull_request'
-        run: |
-          if [[ "${{ githui.event.pull_request.base.ref }}" == "stage" &&  "${{ githui.event.pull_request.head.ref }}" != "dev"]]
-            echo "Merge into stage can only be done from devel"
-            exit 1
-          fi
-          if [[ "${{ githui.event.pull_request.base.ref }}" == "prod" &&  "${{ githui.event.pull_request.head.ref }}" != "stage"]]
-            echo "Merge into prod can only be done from stage"
-            exit 1
-          fi
-
+      
       - name: Set up terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -49,3 +37,6 @@ jobs:
       
       - name: Terraform Plam
         run: terraform plan 
+      
+      - name: Terraform plan
+        run: terraform apply --auto-approve
