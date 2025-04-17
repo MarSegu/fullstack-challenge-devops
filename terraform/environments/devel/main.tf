@@ -27,4 +27,5 @@ module "azure_web_app"{
   environment = var.environment
   region = var.region
   tags = var.tags
+  
 }
