@@ -33,7 +33,7 @@ jobs:
           terraform_version: "1.1.7"
 
       - name: Terraform Init
-        run: terraform Init
+        run: terraform init
       
       - name: Terraform Plam
         run: terraform plan 
