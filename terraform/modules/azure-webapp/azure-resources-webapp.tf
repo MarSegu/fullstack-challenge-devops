@@ -50,8 +50,8 @@ resource "azurerm_log_analytics_workspace" "logs" {
 
 resource "azurerm_monitor_diagnostic_setting" "example" {
   name               = "example"
-  target_resource_id = azurerm_key_vault.example.id
-  storage_account_id = azurerm_storage_account.example.id
+  target_resource_id = azurerm_storage_account.static_website.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
 
   metric {
     category = "Transaction"
