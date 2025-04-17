@@ -8,6 +8,11 @@ variable "region" {
     description = "Region for the implementation"
 }
 
+variable "tags" {
+    type = map(string)
+    description = "tags"
+}
+
 variable "subscription_id" {
     type = string
     default = null

@@ -23,7 +23,8 @@ provider "azurerm" {
 }
 
 module "azure_web_app"{
-    source = "../../modules/azure-webapp"
-    environment = var.environment
-    region = var.region
+  source = "../../modules/azure-webapp"
+  environment = var.environment
+  region = var.region
+  tags = var.tags
 }
