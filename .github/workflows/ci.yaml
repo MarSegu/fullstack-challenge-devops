@@ -21,11 +21,11 @@ jobs:
       - name: Enforce branching strategy
         if: github.event_name == 'pull_request'
         run: |
-          if [[ "${{ github.event.pull_request.base.ref }}" == "stage" &&  "${{ github.event.pull_request.head.ref }}" != "dev"]]; then
+          if [[ "${{ github.event.pull_request.base.ref }}" == "stage" &&  "${{ github.event.pull_request.head.ref }}" != "dev"]] then
             echo "Merge into stage can only be done from devel"
             exit 1
           fi
-          if [[ "${{ github.event.pull_request.base.ref }}" == "prod" &&  "${{ github.event.pull_request.head.ref }}" != "stage"]]; then
+          if [[ "${{ github.event.pull_request.base.ref }}" == "prod" &&  "${{ github.event.pull_request.head.ref }}" != "stage"]] then
             echo "Merge into prod can only be done from stage"
             exit 1
           fi
