@@ -54,7 +54,7 @@ resource "azurerm_monitor_diagnostic_setting" "example" {
   log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
 
   metric {
-    category = "Transaction"
+    category = "allLogs"
     enabled = true
   }
 
