@@ -49,7 +49,7 @@ resource "azurerm_log_analytics_workspace" "logs" {
 }
 
 resource "azurerm_monitor_diagnostic_setting" "example" {
-  name               = "example"
+  name               = "web-app-diagnostic-setting-${var.environment}"
   target_resource_id = azurerm_storage_account.static_website.id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
 
@@ -58,8 +58,4 @@ resource "azurerm_monitor_diagnostic_setting" "example" {
     enabled = true
   }
 
-  metric {
-    category = "Capacity"
-    enabled = true
-  }
 }
