@@ -6,11 +6,11 @@ on:
       [devel, stage, prod]
 
 jobs:
-  terraform-aply:
+  terraform-apply:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./terraform/environments/${{ github.ref_name }}
+        working-directory: ./terraform/environments/${{ github.ref_name }} 
 
     env:
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
@@ -35,8 +35,45 @@ jobs:
       - name: Terraform Init
         run: terraform init
       
-      - name: Terraform Plam
+      - name: Terraform Plan
         run: terraform plan 
       
-      - name: Terraform apply
+      - name: Terraform Apply
         run: terraform apply --auto-approve
+
+      # Start npm-related steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '15'
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./  # Explicitly set the working directory to the root
+
+      - name: Run linter
+        run: npm run lint
+        working-directory: ./  # Explicitly set the working directory to the root
+
+      - name: Run formatter
+        run: npm run prettier
+        working-directory: ./  # Explicitly set the working directory to the root
+
+      - name: Run tests
+        env: 
+          CI: true
+        run: npm run test
+        working-directory: ./  # Explicitly set the working directory to the root
+
+      - name: Build project
+        run: npm run build
+        working-directory: ./  # Explicitly set the working directory to the root
+
+      - name: Install Azure CLI
+        run: |
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+        working-directory: ./
+
+      - name: Upload files
+        run: az storage blob upload-batch --account-name ststaticwebappdevel --destination '$web' --source ./build --auth-mode login --overwrite true
+        working-directory: ./
